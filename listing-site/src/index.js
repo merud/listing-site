@@ -6,7 +6,10 @@ class Sidebar extends React.Component {
     render() {
         return (
             <div className="sidebar">
-                Sidebar
+                <a className="sidebarLink" href="#">Login</a>
+                <a className="sidebarLink" href="#">List</a>
+                <a className="sidebarLink" href="#">Favorites</a>
+                <a className="sidebarAbout" href="#">About</a>
             </div>
         );
     }

@@ -2,9 +2,35 @@
     height: 100%;
     width: 100px;
     position: fixed;
+    background: lightgray;
     border: 1px solid black;
     left: 0;
     top: 0;
+}
+
+.sidebarLink {
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    font-size: 20px;
+    background: cyan;
+    border: 1px solid black;
+    display: block;
+}
+
+.sidebarAbout {
+    position: absolute;
+    bottom: 0;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    font-size: 20px;
+    background: cyan;
+    width: 80px;
+    display: block;
+    border: 1px solid black;
 }
 
 .mainDisplay {
