@@ -6,10 +6,11 @@ class Sidebar extends React.Component {
     render() {
         return (
             <div className="sidebar">
-                <a className="sidebarLink" href="#">Login</a>
-                <a className="sidebarLink" href="#">List</a>
-                <a className="sidebarLink" href="#">Favorites</a>
-                <a className="sidebarAbout" href="#">About</a>
+                <button onClick={() => { this.props.onClick("default") }} className="sidebarLink">Home</button>
+                <button onClick={() => { this.props.onClick("login") }} className="sidebarLink">Login</button>
+                <button onClick={() => { this.props.onClick("list") }} className="sidebarLink">List</button>
+                <button onClick={() => { this.props.onClick("favorites") }} className="sidebarLink">Favorites</button>
+                <button onClick={() => { this.props.onClick("about") }} className="sidebarAbout">About</button>
             </div>
         );
     }
@@ -17,20 +18,77 @@ class Sidebar extends React.Component {
 
 class Display extends React.Component {
     render() {
-        return (
-            <div className="mainDisplay">
-                MainDisplay
-            </div>
-        );
+        const display = this.props.currentDisplay;
+        switch (display) {
+            case "default":
+                return (
+                    <div className="mainDisplay">
+                        Default
+                    </div>
+                );
+
+            case "login":
+                return (
+                    <div className="mainDisplay">
+                        Login
+                    </div>
+                );
+
+            case "list":
+                return (
+                    <div className="mainDisplay">
+                        List
+                    </div>
+                );
+
+            case "favorites":
+                return (
+                    <div className="mainDisplay">
+                        Favorites
+                    </div>
+                );
+
+            case "about":
+                return (
+                    <div className="mainDisplay">
+                        About
+                    </div>
+                );
+            default:
+                return (
+                    <div className="mainDisplay">
+                        Default B
+                    </div>
+                );
+        }
     }
 }
 
 class Site extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            currentState: "default"
+        };
+    }
+
+    sidebarClick(source) {
+        this.setState({
+            currentState: source
+        })
+    }
+
     render() {
+        const currentDisplay = this.state.currentState;
+
         return (
             <div>
-                <Sidebar />
-                <Display />
+                <Sidebar
+                    onClick={(source) => this.sidebarClick(source)}
+                />
+                <Display
+                    currentDisplay={currentDisplay}
+                />
             </div>
         );
     }
