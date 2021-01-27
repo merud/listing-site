@@ -353,7 +353,7 @@ class Display extends React.Component {
     render() {
         const display = this.props.currentDisplay;
         const welcomeMessage = "Welcome, please use the sidebar to navigate the page.";
-        const aboutMessage = "So far this onepage website implements a signup/login/logout system that does not store data between visits.  Thank you for visiting."
+        const aboutMessage = "So far this onepage website implements a signup/login/logout system that does not store data between visits and a profile page that allows alteration of the user account.  Thank you for visiting."
         const userName = this.props.userName;
         switch (display) {
             case "default":
