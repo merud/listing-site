@@ -349,6 +349,51 @@ class PasswordChangeForm extends React.Component {
     }
 }
 
+class List extends React.Component {
+    render() {
+        return (
+            <div>
+                <div className="listElement">
+                    <img className="listPicture" src='/images/BuffaloWings.jpg' alt="Buffalo Wing Image"></img>
+                    <div>
+                        Buffalo Wings
+                    </div>
+                </div>
+                <div className="listElement">
+                    <img className="listPicture" src='/images/Oatmeal.jpg' alt="Oatmeal Image"></img>
+                    <div>
+                        Oatmeal
+                    </div>
+                </div>
+                <div className="listElement">
+                    <img className="listPicture" src='/images/Pizza.jpg' alt="Pizza Image"></img>
+                    <div>
+                        Pizza
+                    </div>
+                </div>
+                <div className="listElement">
+                    <img className="listPicture" src='/images/PotRoast.jpg' alt="Pot Roast Image"></img>
+                    <div>
+                        Pot Roast
+                    </div>
+                </div>
+                <div className="listElement">
+                    <img className="listPicture" src='/images/Icecream.jpg' alt="Icecream Image"></img>
+                    <div>
+                        Icecream
+                    </div>
+                </div>
+                <div className="listElement">
+                    <img className="listPicture" src='/images/GrilledCheese.jpg' alt="Grilled Cheese Image"></img>
+                    <div>
+                        Grilled Cheese
+                    </div>
+                </div>
+            </div>
+        );
+    }
+}
+
 class Display extends React.Component {
     render() {
         const display = this.props.currentDisplay;
@@ -432,7 +477,7 @@ class Display extends React.Component {
             case "list":
                 return (
                     <div className="mainDisplay">
-                        List
+                        <List />
                     </div>
                 );
 
