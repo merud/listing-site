@@ -351,6 +351,7 @@ class PasswordChangeForm extends React.Component {
 
 class List extends React.Component {
     render() {
+        const userItemsList = this.props.userItemsList;
         return (
             <div>
                 <div className="listElement">
@@ -400,6 +401,7 @@ class Display extends React.Component {
         const welcomeMessage = "Welcome, please use the sidebar to navigate the page.";
         const aboutMessage = "So far this onepage website implements a signup/login/logout system that does not store data between visits and a profile page that allows alteration of the user account.  Thank you for visiting."
         const userName = this.props.userName;
+        const userItemsList = this.props.getUserItemsList();
         switch (display) {
             case "default":
                 return (
@@ -477,7 +479,9 @@ class Display extends React.Component {
             case "list":
                 return (
                     <div className="mainDisplay">
-                        <List />
+                        <List
+                            userItemsList={userItemsList}
+                        />
                     </div>
                 );
 
@@ -510,7 +514,6 @@ class Site extends React.Component {
         this.state = {
             currentState: "default",
             userName: this.props.getUserName(),
-            userFavorites: this.props.getUserFavorites()
         };
     }
 
@@ -551,6 +554,7 @@ class Site extends React.Component {
                     updateUserName={(email, newUserName, password) => this.props.updateUserName(email, newUserName, password)}
                     updatePassword={(email, curPassword, newPassword) => this.props.updatePassword(email, curPassword, newPassword)}
                     getUserEmail={() => this.props.getUserEmail()}
+                    getUserItemsList={() => this.props.getUserItemsList()}
                     userName={userName}
                     currentDisplay={currentDisplay}
                 />
@@ -565,7 +569,7 @@ class Backside extends React.Component {
         this.state = {
             userList: [],
             user: null,
-            userFavorites: []
+            userItemsList: []
         };
     }
 
@@ -600,11 +604,51 @@ class Backside extends React.Component {
 
     addUser(newUser) {
         let userList = this.state.userList;
-        userList.push(newUser);
+        let fullUser = {
+            email: newUser.email,
+            userName: newUser.userName,
+            password: newUser.password,
+            userItemsList: []
+        };
+
+        fullUser.userItemsList = this.createDefaultList();
+        userList.push(fullUser);
         this.setState({
             userList: userList,
-            user: newUser
+            user: newUser,
+            userItemsList: fullUser.userItemsList
         });
+    }
+
+    createDefaultList() {
+        let itemsList = [];
+        let defaultElement = {
+            src: '/images/BuffaloWings.jpg',
+            title: 'Buffalo Wings'
+        }
+        itemsList.push(defaultElement);
+
+        defaultElement.src = '/images/Oatmeal.jpg';
+        defaultElement.title = 'Oatmeal';
+        itemsList.push(defaultElement);
+
+        defaultElement.src = '/images/Pizza.jpg';
+        defaultElement.title = 'Pizza';
+        itemsList.push(defaultElement);
+
+        defaultElement.src = '/images/PotRoast.jpg';
+        defaultElement.title = 'Pot Roast';
+        itemsList.push(defaultElement);
+
+        defaultElement.src = '/images/Icecream.jpg';
+        defaultElement.title = 'Icecream';
+        itemsList.push(defaultElement);
+
+        defaultElement.src = '/images/GrilledCheese.jpg';
+        defaultElement.title = 'Grilled Cheese';
+        itemsList.push(defaultElement);
+
+        return itemsList;
     }
 
     loginVerifyUser(user) {
@@ -621,7 +665,7 @@ class Backside extends React.Component {
                     user.userName = userList[i].userName;
                     this.setState({
                         user: user,
-                        userFavorites: userList[i].favorites
+                        userItemsList: userList[i].userItemsList
                     });
                 }
                 break;
@@ -773,18 +817,18 @@ class Backside extends React.Component {
         return (userName);
     }
 
-    getUserFavorites() {
-        let userFavorites = [];
+    getUserItemsList() {
+        let userItemsList = [];
         if (this.state.user) {
-            userFavorites = this.state.userFavorites;
+            userItemsList = this.state.userItemsList;
         }
-        return (userFavorites);
+        return (userItemsList);
     }
 
     logout() {
         this.setState({
             user: null,
-            userFavorites: []
+            userItemsList: []
         })
     }
 
@@ -799,7 +843,7 @@ class Backside extends React.Component {
                     logout={() => this.logout()}
                     getUserName={() => this.getUserName()}
                     getUserEmail={() => this.getUserEmail()}
-                    getUserFavorites={() => this.getUserFavorites()}
+                    getUserItemsList={() => this.getUserItemsList()}
                 />
             )
         }
@@ -809,7 +853,7 @@ class Backside extends React.Component {
                     signup={(user) => this.signupCheckUser(user)}
                     login={(user) => this.loginVerifyUser(user)}
                     getUserName={() => this.getUserName()}
-                    getUserFavorites={() => this.getUserFavorites()}
+                    getUserItemsList={() => this.getUserItemsList()}
                 />
             )
         }
