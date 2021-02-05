@@ -352,44 +352,16 @@ class PasswordChangeForm extends React.Component {
 class List extends React.Component {
     render() {
         const userItemsList = this.props.userItemsList;
+        console.log(userItemsList);
+        const mappedList = userItemsList.map((element, index) => <div key={index} className="listElement">
+            <img className="listPicture" src={element.src} alt={element.title + "Image"}></img>
+            <div>
+                {element.title}
+            </div>
+        </div>);
         return (
             <div>
-                <div className="listElement">
-                    <img className="listPicture" src='/images/BuffaloWings.jpg' alt="Buffalo Wing Image"></img>
-                    <div>
-                        Buffalo Wings
-                    </div>
-                </div>
-                <div className="listElement">
-                    <img className="listPicture" src='/images/Oatmeal.jpg' alt="Oatmeal Image"></img>
-                    <div>
-                        Oatmeal
-                    </div>
-                </div>
-                <div className="listElement">
-                    <img className="listPicture" src='/images/Pizza.jpg' alt="Pizza Image"></img>
-                    <div>
-                        Pizza
-                    </div>
-                </div>
-                <div className="listElement">
-                    <img className="listPicture" src='/images/PotRoast.jpg' alt="Pot Roast Image"></img>
-                    <div>
-                        Pot Roast
-                    </div>
-                </div>
-                <div className="listElement">
-                    <img className="listPicture" src='/images/Icecream.jpg' alt="Icecream Image"></img>
-                    <div>
-                        Icecream
-                    </div>
-                </div>
-                <div className="listElement">
-                    <img className="listPicture" src='/images/GrilledCheese.jpg' alt="Grilled Cheese Image"></img>
-                    <div>
-                        Grilled Cheese
-                    </div>
-                </div>
+                {mappedList}
             </div>
         );
     }
@@ -628,25 +600,35 @@ class Backside extends React.Component {
         }
         itemsList.push(defaultElement);
 
-        defaultElement.src = '/images/Oatmeal.jpg';
-        defaultElement.title = 'Oatmeal';
-        itemsList.push(defaultElement);
+        let defaultElementOne = {
+            src: '/images/Oatmeal.jpg',
+            title: 'Oatmeal'
+        }
+        itemsList.push(defaultElementOne);
 
-        defaultElement.src = '/images/Pizza.jpg';
-        defaultElement.title = 'Pizza';
-        itemsList.push(defaultElement);
+        let defaultElementTwo = {
+            src: '/images/Pizza.jpg',
+            title: 'Pizza'
+        }
+        itemsList.push(defaultElementTwo);
 
-        defaultElement.src = '/images/PotRoast.jpg';
-        defaultElement.title = 'Pot Roast';
-        itemsList.push(defaultElement);
+        let defaultElementThree = {
+            src: '/images/PotRoast.jpg',
+            title: 'Pot Roast'
+        }
+        itemsList.push(defaultElementThree);
 
-        defaultElement.src = '/images/Icecream.jpg';
-        defaultElement.title = 'Icecream';
-        itemsList.push(defaultElement);
+        let defaultElementFour = {
+            src: '/images/Icecream.jpg',
+            title: 'Icecream'
+        }
+        itemsList.push(defaultElementFour);
 
-        defaultElement.src = '/images/GrilledCheese.jpg';
-        defaultElement.title = 'Grilled Cheese';
-        itemsList.push(defaultElement);
+        let defaultElementFive = {
+            src: '/images/GrilledCheese.jpg',
+            title: 'Grilled Cheese'
+        }
+        itemsList.push(defaultElementFive);
 
         return itemsList;
     }
@@ -819,7 +801,10 @@ class Backside extends React.Component {
 
     getUserItemsList() {
         let userItemsList = [];
-        if (this.state.user) {
+        if (!this.state.user) {
+            userItemsList = this.createDefaultList();
+        }
+        else {
             userItemsList = this.state.userItemsList;
         }
         return (userItemsList);
@@ -834,6 +819,7 @@ class Backside extends React.Component {
 
     render() {
         const user = this.state.user;
+
         if (user) {
             return (
                 <Site
