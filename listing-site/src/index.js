@@ -349,21 +349,83 @@ class PasswordChangeForm extends React.Component {
     }
 }
 
+class ListAddForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            src: null,
+            title: null
+        };
+    }
+
+    handleSubmit = (event) => {
+        event.preventDefault();
+        const src = this.state.src;
+        const title = this.state.title;
+
+        this.props.addListElement(src, title);
+    }
+
+    handleChange = (event) => {
+        let name = event.target.name;
+        let value = event.target.value;
+        this.setState({
+            [name]: value
+        })
+    }
+
+
+    render() {
+        return (
+            <form className="initializeForm" onSubmit={this.handleSubmit}>
+                <label>
+                    Image URL:
+                    <input type="url" name="src" onChange={this.handleChange} maxLength="200" required />
+                    <br></br>
+                </label>
+                <label>
+                    Title:
+                    <input type="text" name="title" onChange={this.handleChange} maxLength="50" required />
+                    <br></br>
+                </label>
+                <input type="submit" />
+            </form>
+        );
+    }
+}
+
 class List extends React.Component {
     render() {
+        const userName = this.props.userName;
         const userItemsList = this.props.userItemsList;
-        console.log(userItemsList);
+
         const mappedList = userItemsList.map((element, index) => <div key={index} className="listElement">
             <img className="listPicture" src={element.src} alt={element.title + "Image"}></img>
             <div>
                 {element.title}
             </div>
         </div>);
-        return (
-            <div>
-                {mappedList}
-            </div>
-        );
+
+        if (userName) {
+            return (
+                <div>
+                    {mappedList}
+                    <div className="listAddForm">
+                        <h1>Add List Element?</h1>
+                        <ListAddForm
+                            addListElement={(src, title) => this.props.addListElement(src, title)}
+                        />
+                    </div>
+                </div>
+            );
+        }
+        else {
+            return (
+                <div>
+                    {mappedList}
+                </div>
+            );
+        }
     }
 }
 
@@ -452,7 +514,9 @@ class Display extends React.Component {
                 return (
                     <div className="mainDisplay">
                         <List
+                            userName={userName}
                             userItemsList={userItemsList}
+                            addListElement={(src, title) => this.props.addListElement(src, title)}
                         />
                     </div>
                 );
@@ -525,6 +589,7 @@ class Site extends React.Component {
                     updateEmail={(curEmail, newEmail, password) => this.props.updateEmail(curEmail, newEmail, password)}
                     updateUserName={(email, newUserName, password) => this.props.updateUserName(email, newUserName, password)}
                     updatePassword={(email, curPassword, newPassword) => this.props.updatePassword(email, curPassword, newPassword)}
+                    addListElement={(src, title) => this.props.addListElement(src, title)}
                     getUserEmail={() => this.props.getUserEmail()}
                     getUserItemsList={() => this.props.getUserItemsList()}
                     userName={userName}
@@ -541,6 +606,7 @@ class Backside extends React.Component {
         this.state = {
             userList: [],
             user: null,
+            userIndex: null,
             userItemsList: []
         };
     }
@@ -582,12 +648,14 @@ class Backside extends React.Component {
             password: newUser.password,
             userItemsList: []
         };
+        let userIndex = userList.length;
 
         fullUser.userItemsList = this.createDefaultList();
         userList.push(fullUser);
         this.setState({
             userList: userList,
-            user: newUser,
+            user: fullUser,
+            userIndex: userIndex,
             userItemsList: fullUser.userItemsList
         });
     }
@@ -633,6 +701,24 @@ class Backside extends React.Component {
         return itemsList;
     }
 
+    addListElement(src, title) {
+        let itemsList = this.state.userItemsList.slice();
+        let userList = this.state.userList.slice();
+        let user = Object.assign({}, this.state.user);
+
+        let newElement = {
+            src: src,
+            title: title
+        }
+        itemsList.push(newElement);
+        user.userItemsList = itemsList;
+        userList[this.state.userIndex] = user;
+        this.setState({
+            userList: userList,
+            userItemsList: itemsList
+        });
+    }
+
     loginVerifyUser(user) {
         const userList = this.state.userList;
         let emailCorrect = false;
@@ -647,6 +733,7 @@ class Backside extends React.Component {
                     user.userName = userList[i].userName;
                     this.setState({
                         user: user,
+                        userIndex: i,
                         userItemsList: userList[i].userItemsList
                     });
                 }
@@ -813,6 +900,7 @@ class Backside extends React.Component {
     logout() {
         this.setState({
             user: null,
+            userIndex: null,
             userItemsList: []
         })
     }
@@ -826,6 +914,7 @@ class Backside extends React.Component {
                     updateEmail={(curEmail, newEmail, password) => this.updateEmail(curEmail, newEmail, password)}
                     updateUserName={(email, newUserName, password) => this.updateUserName(email, newUserName, password)}
                     updatePassword={(email, curPassword, newPassword) => this.updatePassword(email, curPassword, newPassword)}
+                    addListElement={(src, title) => this.addListElement(src, title)}
                     logout={() => this.logout()}
                     getUserName={() => this.getUserName()}
                     getUserEmail={() => this.getUserEmail()}
