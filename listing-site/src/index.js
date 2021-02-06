@@ -399,14 +399,16 @@ class List extends React.Component {
         const userName = this.props.userName;
         const userItemsList = this.props.userItemsList;
 
-        const mappedList = userItemsList.map((element, index) => <div key={index} className="listElement">
-            <img className="listPicture" src={element.src} alt={element.title + "Image"}></img>
-            <div>
-                {element.title}
-            </div>
-        </div>);
-
         if (userName) {
+            const mappedList = userItemsList.map((element, index) => <div key={index} className="listElement">
+                <img className="listPicture" src={element.src} alt={element.title + "Image"}></img>
+                <div>
+                    {element.title}
+                    <div>
+                        <button onClick={() => { this.props.removeListElement(index) }} className="removeListElementButton">Remove Entry</button>
+                    </div>
+                </div>
+            </div>);
             return (
                 <div>
                     {mappedList}
@@ -420,6 +422,12 @@ class List extends React.Component {
             );
         }
         else {
+            const mappedList = userItemsList.map((element, index) => <div key={index} className="listElement">
+                <img className="listPicture" src={element.src} alt={element.title + "Image"}></img>
+                <div>
+                    {element.title}
+                </div>
+            </div>);
             return (
                 <div>
                     {mappedList}
@@ -517,6 +525,7 @@ class Display extends React.Component {
                             userName={userName}
                             userItemsList={userItemsList}
                             addListElement={(src, title) => this.props.addListElement(src, title)}
+                            removeListElement={(index) => this.props.removeListElement(index)}
                         />
                     </div>
                 );
@@ -590,6 +599,7 @@ class Site extends React.Component {
                     updateUserName={(email, newUserName, password) => this.props.updateUserName(email, newUserName, password)}
                     updatePassword={(email, curPassword, newPassword) => this.props.updatePassword(email, curPassword, newPassword)}
                     addListElement={(src, title) => this.props.addListElement(src, title)}
+                    removeListElement={(index) => this.props.removeListElement(index)}
                     getUserEmail={() => this.props.getUserEmail()}
                     getUserItemsList={() => this.props.getUserItemsList()}
                     userName={userName}
@@ -711,6 +721,20 @@ class Backside extends React.Component {
             title: title
         }
         itemsList.push(newElement);
+        user.userItemsList = itemsList;
+        userList[this.state.userIndex] = user;
+        this.setState({
+            userList: userList,
+            userItemsList: itemsList
+        });
+    }
+
+    removeListElement(index) {
+        let itemsList = this.state.userItemsList.slice();
+        let userList = this.state.userList.slice();
+        let user = Object.assign({}, this.state.user);
+
+        itemsList.splice(index, 1)
         user.userItemsList = itemsList;
         userList[this.state.userIndex] = user;
         this.setState({
@@ -915,6 +939,7 @@ class Backside extends React.Component {
                     updateUserName={(email, newUserName, password) => this.updateUserName(email, newUserName, password)}
                     updatePassword={(email, curPassword, newPassword) => this.updatePassword(email, curPassword, newPassword)}
                     addListElement={(src, title) => this.addListElement(src, title)}
+                    removeListElement={(index) => this.removeListElement(index)}
                     logout={() => this.logout()}
                     getUserName={() => this.getUserName()}
                     getUserEmail={() => this.getUserEmail()}
