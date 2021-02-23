@@ -394,7 +394,61 @@ class ListAddForm extends React.Component {
     }
 }
 
+class ElementAddTag extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            tag: null
+        };
+    }
+
+    handleSubmit = (event) => {
+        event.preventDefault();
+        const tag = this.state.tag;
+
+        this.props.addElementTag(this.props.index, tag);
+    }
+
+    handleChange = (event) => {
+        let name = event.target.name;
+        let value = event.target.value;
+        this.setState({
+            [name]: value
+        })
+    }
+
+
+    render() {
+        return (
+            <form className="initializeForm" onSubmit={this.handleSubmit}>
+                <label>
+                    Add New Tag?:
+                    <input type="text" name="tag" onChange={this.handleChange} maxLength="50" required />
+                </label>
+                <input type="submit" />
+            </form>
+        );
+    }
+}
+
 class List extends React.Component {
+    listTags(tags, elementIndex) {
+        const userName = this.props.userName;
+        if (userName) {
+            const tagList = tags.map((element, index) => <div key={index}>
+                {element}
+                <button onClick={() => { this.props.removeElementTag(index, elementIndex) }} className="removeElementTagButton">Remove Tag?</button>
+            </div>);
+            return tagList;
+        }
+        else{
+            const tagList = tags.map((element, index) => <div key={index}>
+                {element}
+            </div>);
+            return tagList;
+        }
+    }
+
     render() {
         const userName = this.props.userName;
         const userItemsList = this.props.userItemsList;
@@ -403,8 +457,16 @@ class List extends React.Component {
             const mappedList = userItemsList.map((element, index) => <div key={index} className="listElement">
                 <img className="listPicture" src={element.src} alt={element.title + "Image"}></img>
                 <div>
-                    {element.title}
+                    <div className="listElementTitle">
+                        {element.title}
+                    </div>
                     <div>
+                        <div className="listElementLabel">Tags</div>
+                        {this.listTags(element.tags, index)}
+                        <ElementAddTag
+                            index={index}
+                            addElementTag={(index, tag) => this.props.addElementTag(index, tag)}
+                        />
                         <button onClick={() => { this.props.removeListElement(index) }} className="removeListElementButton">Remove Entry</button>
                     </div>
                 </div>
@@ -424,9 +486,11 @@ class List extends React.Component {
         else {
             const mappedList = userItemsList.map((element, index) => <div key={index} className="listElement">
                 <img className="listPicture" src={element.src} alt={element.title + "Image"}></img>
-                <div>
+                <div className="listElementTitle">
                     {element.title}
                 </div>
+                <div className="listElementLabel">Tags</div>
+                {this.listTags(element.tags)}
             </div>);
             return (
                 <div>
@@ -441,7 +505,7 @@ class Display extends React.Component {
     render() {
         const display = this.props.currentDisplay;
         const welcomeMessage = "Welcome, please use the sidebar to navigate the page.";
-        const aboutMessage = "So far this onepage website implements a signup/login/logout system that does not store data between visits and a profile page that allows alteration of the user account.  Thank you for visiting."
+        const aboutMessage = "So far this onepage website implements a signup/login/logout system that does not store data between visits and a profile page that allows alteration of the user account.  Also has the ability to create a list of url image links and descriptors maintained per user.  Thank you for visiting."
         const userName = this.props.userName;
         const userItemsList = this.props.getUserItemsList();
         switch (display) {
@@ -525,6 +589,8 @@ class Display extends React.Component {
                             userName={userName}
                             userItemsList={userItemsList}
                             addListElement={(src, title) => this.props.addListElement(src, title)}
+                            addElementTag={(index, tag) => this.props.addElementTag(index, tag)}
+                            removeElementTag={(tagIndex, elementIndex) => this.props.removeElementTag(tagIndex, elementIndex)}
                             removeListElement={(index) => this.props.removeListElement(index)}
                         />
                     </div>
@@ -599,6 +665,8 @@ class Site extends React.Component {
                     updateUserName={(email, newUserName, password) => this.props.updateUserName(email, newUserName, password)}
                     updatePassword={(email, curPassword, newPassword) => this.props.updatePassword(email, curPassword, newPassword)}
                     addListElement={(src, title) => this.props.addListElement(src, title)}
+                    addElementTag={(index, tag) => this.props.addElementTag(index, tag)}
+                    removeElementTag={(tagIndex, elementIndex) => this.props.removeElementTag(tagIndex, elementIndex)}
                     removeListElement={(index) => this.props.removeListElement(index)}
                     getUserEmail={() => this.props.getUserEmail()}
                     getUserItemsList={() => this.props.getUserItemsList()}
@@ -674,37 +742,43 @@ class Backside extends React.Component {
         let itemsList = [];
         let defaultElement = {
             src: '/images/BuffaloWings.jpg',
-            title: 'Buffalo Wings'
+            title: 'Buffalo Wings',
+            tags: ['Appetizer']
         }
         itemsList.push(defaultElement);
 
         let defaultElementOne = {
             src: '/images/Oatmeal.jpg',
-            title: 'Oatmeal'
+            title: 'Oatmeal',
+            tags: ['Breakfast']
         }
         itemsList.push(defaultElementOne);
 
         let defaultElementTwo = {
             src: '/images/Pizza.jpg',
-            title: 'Pizza'
+            title: 'Pizza',
+            tags: ['Lunch', 'Dinner']
         }
         itemsList.push(defaultElementTwo);
 
         let defaultElementThree = {
             src: '/images/PotRoast.jpg',
-            title: 'Pot Roast'
+            title: 'Pot Roast',
+            tags: ['Lunch', 'Dinner']
         }
         itemsList.push(defaultElementThree);
 
         let defaultElementFour = {
             src: '/images/Icecream.jpg',
-            title: 'Icecream'
+            title: 'Icecream',
+            tags: ['Dessert']
         }
         itemsList.push(defaultElementFour);
 
         let defaultElementFive = {
             src: '/images/GrilledCheese.jpg',
-            title: 'Grilled Cheese'
+            title: 'Grilled Cheese',
+            tags: ['Lunch', 'Dinner']
         }
         itemsList.push(defaultElementFive);
 
@@ -718,9 +792,39 @@ class Backside extends React.Component {
 
         let newElement = {
             src: src,
-            title: title
+            title: title,
+            tags: []
         }
         itemsList.push(newElement);
+        user.userItemsList = itemsList;
+        userList[this.state.userIndex] = user;
+        this.setState({
+            userList: userList,
+            userItemsList: itemsList
+        });
+    }
+
+    addElementTag(index, tag) {
+        let itemsList = this.state.userItemsList.slice();
+        let userList = this.state.userList.slice();
+        let user = Object.assign({}, this.state.user);
+        console.log(itemsList[index]);
+
+        itemsList[index].tags.push(tag);
+        user.userItemsList = itemsList;
+        userList[this.state.userIndex] = user;
+        this.setState({
+            userList: userList,
+            userItemsList: itemsList
+        });
+    }
+
+    removeElementTag(tagIndex, elementIndex) {
+        let itemsList = this.state.userItemsList.slice();
+        let userList = this.state.userList.slice();
+        let user = Object.assign({}, this.state.user);
+
+        itemsList[elementIndex].tags.splice(tagIndex, 1);
         user.userItemsList = itemsList;
         userList[this.state.userIndex] = user;
         this.setState({
@@ -734,7 +838,7 @@ class Backside extends React.Component {
         let userList = this.state.userList.slice();
         let user = Object.assign({}, this.state.user);
 
-        itemsList.splice(index, 1)
+        itemsList.splice(index, 1);
         user.userItemsList = itemsList;
         userList[this.state.userIndex] = user;
         this.setState({
@@ -939,6 +1043,8 @@ class Backside extends React.Component {
                     updateUserName={(email, newUserName, password) => this.updateUserName(email, newUserName, password)}
                     updatePassword={(email, curPassword, newPassword) => this.updatePassword(email, curPassword, newPassword)}
                     addListElement={(src, title) => this.addListElement(src, title)}
+                    addElementTag={(index, tag) => this.addElementTag(index, tag)}
+                    removeElementTag={(tagIndex, elementIndex) => this.removeElementTag(tagIndex, elementIndex)}
                     removeListElement={(index) => this.removeListElement(index)}
                     logout={() => this.logout()}
                     getUserName={() => this.getUserName()}
