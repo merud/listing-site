@@ -404,8 +404,9 @@ class ElementAddTag extends React.Component {
 
     handleSubmit = (event) => {
         event.preventDefault();
-        const tag = this.state.tag;
-
+        let tag = this.state.tag;
+        tag = tag.toLowerCase();
+        tag = tag.charAt(0).toUpperCase() + tag.slice(1);
         this.props.addElementTag(this.props.index, tag);
     }
 
@@ -437,11 +438,11 @@ class List extends React.Component {
         if (userName) {
             const tagList = tags.map((element, index) => <div key={index}>
                 {element}
-                <button onClick={() => { this.props.removeElementTag(index, elementIndex) }} className="removeElementTagButton">Remove Tag?</button>
+                <button onClick={() => { this.props.removeElementTag(index, elementIndex) }} className="removeElementTagButton">X</button>
             </div>);
             return tagList;
         }
-        else{
+        else {
             const tagList = tags.map((element, index) => <div key={index}>
                 {element}
             </div>);
@@ -455,7 +456,7 @@ class List extends React.Component {
 
         if (userName) {
             const mappedList = userItemsList.map((element, index) => <div key={index} className="listElement">
-                <img className="listPicture" src={element.src} alt={element.title + "Image"}></img>
+                <img className="listPicture" src={element.src} alt={element.title + "Image"} onClick={this.listIngredients}></img>
                 <div>
                     <div className="listElementTitle">
                         {element.title}
@@ -810,13 +811,16 @@ class Backside extends React.Component {
         let user = Object.assign({}, this.state.user);
         console.log(itemsList[index]);
 
-        itemsList[index].tags.push(tag);
-        user.userItemsList = itemsList;
-        userList[this.state.userIndex] = user;
-        this.setState({
-            userList: userList,
-            userItemsList: itemsList
-        });
+        if (itemsList[index].tags.includes(tag)) {}
+        else {
+            itemsList[index].tags.push(tag);
+            user.userItemsList = itemsList;
+            userList[this.state.userIndex] = user;
+            this.setState({
+                userList: userList,
+                userItemsList: itemsList
+            });
+        }
     }
 
     removeElementTag(tagIndex, elementIndex) {
