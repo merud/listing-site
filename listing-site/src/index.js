@@ -23,7 +23,6 @@ class Sidebar extends React.Component {
                     <button onClick={() => { this.props.displayClick("profile") }} className="sidebarLink">Profile</button>
                     <button onClick={() => { this.props.displayClick("logout") }} className="sidebarLink">Logout</button>
                     <button onClick={() => { this.props.displayClick("list") }} className="sidebarLink">List</button>
-                    <button onClick={() => { this.props.displayClick("favorites") }} className="sidebarLink">Favorites</button>
                     <button onClick={() => { this.props.displayClick("about") }} className="sidebarAbout">About</button>
                 </div>
             );
@@ -432,7 +431,73 @@ class ElementAddTag extends React.Component {
     }
 }
 
+class ListFilterForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            titleFilter: null,
+            tagFilter: null
+        };
+    }
+
+    handleSubmit = (event) => {
+        event.preventDefault();
+
+        let titleFilter = this.state.titleFilter;
+        if (titleFilter) {
+            titleFilter = titleFilter.toLowerCase();
+        }
+
+        let tagFilter = this.state.tagFilter;
+        if (tagFilter) {
+            tagFilter = tagFilter.toLowerCase();
+        }
+
+        this.props.setFilter(titleFilter, tagFilter);
+    }
+
+    handleChange = (event) => {
+        let name = event.target.name;
+        let value = event.target.value;
+        this.setState({
+            [name]: value
+        })
+    }
+
+
+    render() {
+        return (
+            <form className="initializeForm" onSubmit={this.handleSubmit}>
+                <label>
+                    Title Filter Word/Phrase:
+                    <input type="text" name="titleFilter" onChange={this.handleChange} maxLength="50" />
+                    (will search for the entry anywhere in the title)
+                </label>
+                <br></br>
+                <label>
+                    Tag Filter Word/Phrase:
+                    <input type="text" name="tagFilter" onChange={this.handleChange} maxLength="50" />
+                    (will search for entry anywhere in any tag)
+                </label>
+                <div>
+                    Note that the search results will search for the entire entry within the title or tag fields, and will only show matches that include both the title and tag entries (if any entry is made).
+                </div>
+                <input type="submit" />
+            </form>
+        );
+    }
+}
+
 class List extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            displayItemsList: this.props.userItemsList,
+            titleFilter: null,
+            tagFilter: null
+        };
+    }
+
     listTags(tags, elementIndex) {
         const userName = this.props.userName;
         if (userName) {
@@ -450,12 +515,64 @@ class List extends React.Component {
         }
     }
 
+    setFilter(titleFilter, tagFilter) {
+        this.setState({
+            titleFilter: titleFilter,
+            tagFilter: tagFilter
+        });
+    }
+
+    applyFilter(itemsList) {
+        let displayItemsList = itemsList;
+        let titleFilter = this.state.titleFilter;
+        let tagFilter = this.state.tagFilter;
+        let filteredList = [];
+        let titleContained = false;
+        let tagContained = false;
+        let lowerTitle = null;
+        let lowerTag = null;
+
+        for (let i = 0; i < displayItemsList.length; i++) {
+            lowerTitle = displayItemsList[i].title.toLowerCase();
+            if (lowerTitle.includes(titleFilter) || titleFilter === "" || titleFilter === null) {
+                titleContained = true;
+            }
+
+            if (titleContained) {
+                if (tagFilter === "" || tagFilter === null) {
+                    tagContained = true;
+                }
+                for (let j = 0; j < displayItemsList[i].tags.length; j++) {
+                    lowerTag = displayItemsList[i].tags[j].toLowerCase();
+                    if (lowerTag.includes(tagFilter)) {
+                        tagContained = true;
+                    }
+                }
+            }
+
+            if (titleContained && tagContained) {
+                filteredList.push(displayItemsList[i]);
+            }
+
+            titleContained = false;
+            tagContained = false;
+        }
+
+        return filteredList;
+    }
+
     render() {
         const userName = this.props.userName;
-        const userItemsList = this.props.userItemsList;
+        let displayItemsList = this.props.userItemsList;
+
+        for (let i = 0; i < displayItemsList.length; i++) {
+            displayItemsList[i].trueIndex = i;
+        }
+
+        displayItemsList = this.applyFilter(displayItemsList);
 
         if (userName) {
-            const mappedList = userItemsList.map((element, index) => <div key={index} className="listElement">
+            const mappedList = displayItemsList.map((element, index) => <div key={index} className="listElement">
                 <img className="listPicture" src={element.src} alt={element.title + "Image"} onClick={this.listIngredients}></img>
                 <div>
                     <div className="listElementTitle">
@@ -463,17 +580,20 @@ class List extends React.Component {
                     </div>
                     <div>
                         <div className="listElementLabel">Tags</div>
-                        {this.listTags(element.tags, index)}
+                        {this.listTags(element.tags, element.trueIndex)}
                         <ElementAddTag
-                            index={index}
+                            index={element.trueIndex}
                             addElementTag={(index, tag) => this.props.addElementTag(index, tag)}
                         />
-                        <button onClick={() => { this.props.removeListElement(index) }} className="removeListElementButton">Remove Entry</button>
+                        <button onClick={() => { this.props.removeListElement(element.trueIndex) }} className="removeListElementButton">Remove Entry</button>
                     </div>
                 </div>
             </div>);
             return (
                 <div>
+                    <ListFilterForm
+                        setFilter={(titleFilter, tagFilter) => this.setFilter(titleFilter, tagFilter)}
+                    />
                     {mappedList}
                     <div className="listAddForm">
                         <h1>Add List Element?</h1>
@@ -485,7 +605,7 @@ class List extends React.Component {
             );
         }
         else {
-            const mappedList = userItemsList.map((element, index) => <div key={index} className="listElement">
+            const mappedList = displayItemsList.map((element, index) => <div key={index} className="listElement">
                 <img className="listPicture" src={element.src} alt={element.title + "Image"}></img>
                 <div className="listElementTitle">
                     {element.title}
@@ -495,6 +615,9 @@ class List extends React.Component {
             </div>);
             return (
                 <div>
+                    <ListFilterForm
+                        setFilter={(titleFilter, tagFilter) => this.setFilter(titleFilter, tagFilter)}
+                    />
                     {mappedList}
                 </div>
             );
@@ -502,11 +625,37 @@ class List extends React.Component {
     }
 }
 
+class About extends React.Component {
+    render() {
+        return (
+            <div>
+                <div>
+                    Hello and Welcome to my one-page React website.  This website is aimed to generally work around managing a list of objects with a variety of functionalities relating to that idea.  Thank you for visiting.
+                    Please note that currently data is not stored between visiting sessions and that the website is setup to function as one page, thus, browsing back will not pull up an earlier display.
+                </div>
+
+                <h1>
+                    Current Functionality
+                </h1>
+                <ol>
+                    <li>User Signup/Login/Logout</li>
+                    <li>Maintaining a list of users and their related information</li>
+                    <li>User updating of account information including name, email, and password</li>
+                    <li>User-managed list of elements maintained after logout</li>
+                    <li>Addition and removal of user elements to the list of elements (currently with pictures provided by reference link)</li>
+                    <li>Adding and removing tags to list objects</li>
+                    <li>Filtering of element list by matching entries to either title, tag, or both</li>
+                    <li>Editing of element entries while in a filtered list</li>
+                </ol>
+            </div>
+        )
+    }
+}
+
 class Display extends React.Component {
     render() {
         const display = this.props.currentDisplay;
         const welcomeMessage = "Welcome, please use the sidebar to navigate the page.";
-        const aboutMessage = "So far this onepage website implements a signup/login/logout system that does not store data between visits and a profile page that allows alteration of the user account.  Also has the ability to create a list of url image links and descriptors maintained per user.  Thank you for visiting."
         const userName = this.props.userName;
         const userItemsList = this.props.getUserItemsList();
         switch (display) {
@@ -597,17 +746,10 @@ class Display extends React.Component {
                     </div>
                 );
 
-            case "favorites":
-                return (
-                    <div className="mainDisplay">
-                        Favorites
-                    </div>
-                );
-
             case "about":
                 return (
                     <div className="mainDisplay">
-                        {aboutMessage}
+                        <About />
                     </div>
                 );
             default:
@@ -811,7 +953,7 @@ class Backside extends React.Component {
         let user = Object.assign({}, this.state.user);
         console.log(itemsList[index]);
 
-        if (itemsList[index].tags.includes(tag)) {}
+        if (itemsList[index].tags.includes(tag)) { }
         else {
             itemsList[index].tags.push(tag);
             user.userItemsList = itemsList;
