@@ -488,13 +488,57 @@ class ListFilterForm extends React.Component {
     }
 }
 
+class ListSortTypeForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            sortType: null
+        };
+    }
+
+    handleSubmit = (event) => {
+        event.preventDefault();
+
+        const sortType = this.state.sortType;
+
+        this.props.setSortType(sortType);
+    }
+
+    handleChange = (event) => {
+        let name = event.target.name;
+        let value = event.target.value;
+        this.setState({
+            [name]: value
+        })
+    }
+
+
+    render() {
+        return (
+            <form className="initializeForm" onSubmit={this.handleSubmit}>
+                <br></br>
+                Sort By 
+                <br></br>
+                <input type="radio" name="sortType" value="alpha" onChange={this.handleChange} />
+                <label htmlFor="alpha">Alphabetical</label>
+                <br></br>
+                <input type="radio" name="sortType" value="antiAlpha" onChange={this.handleChange} />
+                <label htmlFor="antiAlpha">Reverse Alphabetical</label>
+                <br></br>
+                <input type="submit" />
+            </form>
+        );
+    }
+}
+
 class List extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             displayItemsList: this.props.userItemsList,
             titleFilter: null,
-            tagFilter: null
+            tagFilter: null,
+            sortType: null
         };
     }
 
@@ -561,15 +605,71 @@ class List extends React.Component {
         return filteredList;
     }
 
+    setSortType(sortType) {
+        this.setState({
+            prevSort: this.state.sortType,
+            sortType: sortType
+        })
+    }
+
+    applySort(displayItemsList) {
+        const sortType = this.state.sortType;
+        let newList = [];
+
+        let listLength = displayItemsList.length;
+
+        if (sortType === "alpha") {
+            for (let j = 0; j < listLength; j++) {
+                let lowestIndex = null;
+                for (let i = 0; i < displayItemsList.length; i++) {
+                    if (lowestIndex != null) {
+                        if (displayItemsList[i].title.toLowerCase() < displayItemsList[lowestIndex].title.toLowerCase()) {
+                            lowestIndex = i;
+                        }
+                    }
+                    else {
+                        lowestIndex = i;
+                    }
+                }
+                newList.push(displayItemsList[lowestIndex]);
+                displayItemsList.splice(lowestIndex, 1);
+            }
+        }
+        else if (sortType === "antiAlpha") {
+            for (let j = 0; j < listLength; j++) {
+                let highestIndex = null;
+                for (let i = 0; i < displayItemsList.length; i++) {
+                    if (highestIndex) {
+                        if (displayItemsList[i].title.toLowerCase() > displayItemsList[highestIndex].title.toLowerCase()) {
+                            highestIndex = i;
+                        }
+                    }
+                    else {
+                        highestIndex = i;
+                    }
+                }
+                newList.push(displayItemsList[highestIndex]);
+                displayItemsList.splice(highestIndex, 1)
+            }
+        }
+
+        return newList;
+    }
+
     render() {
         const userName = this.props.userName;
         let displayItemsList = this.props.userItemsList;
+        const sortType = this.state.sortType;
 
         for (let i = 0; i < displayItemsList.length; i++) {
             displayItemsList[i].trueIndex = i;
         }
 
         displayItemsList = this.applyFilter(displayItemsList);
+
+        if (sortType) {
+            displayItemsList = this.applySort(displayItemsList);
+        }
 
         if (userName) {
             const mappedList = displayItemsList.map((element, index) => <div key={index} className="listElement">
@@ -594,6 +694,9 @@ class List extends React.Component {
                     <ListFilterForm
                         setFilter={(titleFilter, tagFilter) => this.setFilter(titleFilter, tagFilter)}
                     />
+                    <ListSortTypeForm
+                        setSortType={(sortType) => this.setSortType(sortType)}
+                    />
                     {mappedList}
                     <div className="listAddForm">
                         <h1>Add List Element?</h1>
@@ -617,6 +720,9 @@ class List extends React.Component {
                 <div>
                     <ListFilterForm
                         setFilter={(titleFilter, tagFilter) => this.setFilter(titleFilter, tagFilter)}
+                    />
+                    <ListSortTypeForm
+                        setSortType={(sortType) => this.setSortType(sortType)}
                     />
                     {mappedList}
                 </div>
