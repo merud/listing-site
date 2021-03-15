@@ -4,34 +4,6 @@ import './index.css';
 import About from './about.js'
 import List from './list.js'
 
-class Sidebar extends React.Component {
-    render() {
-        const isLoggedIn = this.props.isLoggedIn;
-        if (!isLoggedIn) {
-            return (
-                <div className="sidebar">
-                    <button onClick={() => { this.props.displayClick("default") }} className="sidebarLink">Home</button>
-                    <button onClick={() => { this.props.displayClick("login") }} className="sidebarLink">Login</button>
-                    <button onClick={() => { this.props.displayClick("signup") }} className="sidebarLink">Signup</button>
-                    <button onClick={() => { this.props.displayClick("list") }} className="sidebarLink">List</button>
-                    <button onClick={() => { this.props.displayClick("about") }} className="sidebarAbout">About</button>
-                </div>
-            );
-        }
-        else {
-            return (
-                <div className="sidebar">
-                    <button onClick={() => { this.props.displayClick("default") }} className="sidebarLink">Home</button>
-                    <button onClick={() => { this.props.displayClick("profile") }} className="sidebarLink">Profile</button>
-                    <button onClick={() => { this.props.displayClick("logout") }} className="sidebarLink">Logout</button>
-                    <button onClick={() => { this.props.displayClick("list") }} className="sidebarLink">List</button>
-                    <button onClick={() => { this.props.displayClick("about") }} className="sidebarAbout">About</button>
-                </div>
-            );
-        }
-    }
-}
-
 class LoginForm extends React.Component {
     constructor(props) {
         super(props);
@@ -350,8 +322,6 @@ class PasswordChangeForm extends React.Component {
     }
 }
 
-
-
 class Display extends React.Component {
     render() {
         const display = this.props.currentDisplay;
@@ -458,6 +428,34 @@ class Display extends React.Component {
                         Default B
                     </div>
                 );
+        }
+    }
+}
+
+class Sidebar extends React.Component {
+    render() {
+        const isLoggedIn = this.props.isLoggedIn;
+        if (!isLoggedIn) {
+            return (
+                <div className="sidebar">
+                    <button onClick={() => { this.props.displayClick("default") }} className="sidebarLink">Home</button>
+                    <button onClick={() => { this.props.displayClick("login") }} className="sidebarLink">Login</button>
+                    <button onClick={() => { this.props.displayClick("signup") }} className="sidebarLink">Signup</button>
+                    <button onClick={() => { this.props.displayClick("list") }} className="sidebarLink">List</button>
+                    <button onClick={() => { this.props.displayClick("about") }} className="sidebarAbout">About</button>
+                </div>
+            );
+        }
+        else {
+            return (
+                <div className="sidebar">
+                    <button onClick={() => { this.props.displayClick("default") }} className="sidebarLink">Home</button>
+                    <button onClick={() => { this.props.displayClick("profile") }} className="sidebarLink">Profile</button>
+                    <button onClick={() => { this.props.displayClick("logout") }} className="sidebarLink">Logout</button>
+                    <button onClick={() => { this.props.displayClick("list") }} className="sidebarLink">List</button>
+                    <button onClick={() => { this.props.displayClick("about") }} className="sidebarAbout">About</button>
+                </div>
+            );
         }
     }
 }
