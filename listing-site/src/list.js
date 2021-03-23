@@ -74,7 +74,13 @@ class ElementAddTag extends React.Component {
     render() {
         return (
             <form className="initializeForm" onSubmit={this.handleSubmit}>
-                <label>
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+                <label >
                     Add New Tag?:
                     <input type="text" name="tag" onChange={this.handleChange} maxLength="50" required />
                 </label>
@@ -170,7 +176,7 @@ class ListSortTypeForm extends React.Component {
         return (
             <form className="initializeForm" onSubmit={this.handleSubmit}>
                 <br></br>
-                Sort By 
+                Sort By
                 <br></br>
                 <input type="radio" name="sortType" value="alpha" onChange={this.handleChange} />
                 <label htmlFor="alpha">Alphabetical</label>
@@ -198,14 +204,14 @@ class List extends React.Component {
     listTags(tags, elementIndex) {
         const userName = this.props.userName;
         if (userName) {
-            const tagList = tags.map((element, index) => <div key={index}>
+            const tagList = tags.map((element, index) => <div class="tagElement" key={index}>
                 {element}
                 <button onClick={() => { this.props.removeElementTag(index, elementIndex) }} className="removeElementTagButton">X</button>
             </div>);
             return tagList;
         }
         else {
-            const tagList = tags.map((element, index) => <div key={index}>
+            const tagList = tags.map((element, index) => <div class="tagElement" key={index}>
                 {element}
             </div>);
             return tagList;
