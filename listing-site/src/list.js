@@ -73,19 +73,16 @@ class ElementAddTag extends React.Component {
 
     render() {
         return (
-            <form className="initializeForm" onSubmit={this.handleSubmit}>
-                <br></br>
-                <br></br>
-                <br></br>
-                <br></br>
-                <br></br>
-                <br></br>
-                <label >
-                    Add New Tag?:
-                    <input type="text" name="tag" onChange={this.handleChange} maxLength="50" required />
-                </label>
-                <input type="submit" />
-            </form>
+            <span>
+                <form class="tagAddElement" className="initializeForm" onSubmit={this.handleSubmit}>
+                    <br></br>
+                    <br></br>
+                    <div class="newTagText">
+                        <input type="text" name="tag" onChange={this.handleChange} maxLength="50" placeholder="add new tag" required />
+                        <input type="submit" />
+                    </div>
+                </form>
+            </span>
         );
     }
 }
@@ -344,7 +341,9 @@ class List extends React.Component {
                             index={element.trueIndex}
                             addElementTag={(index, tag) => this.props.addElementTag(index, tag)}
                         />
-                        <button onClick={() => { this.props.removeListElement(element.trueIndex) }} className="removeListElementButton">Remove Entry</button>
+                        <div class="removeButton">
+                            <button onClick={() => { this.props.removeListElement(element.trueIndex) }} className="removeListElementButton">Remove Entry</button>
+                        </div>
                     </div>
                 </div>
             </div>);
