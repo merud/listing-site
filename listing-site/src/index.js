@@ -582,42 +582,42 @@ class Backside extends React.Component {
     createDefaultList() {
         let itemsList = [];
         let defaultElement = {
-            src: '/images/BuffaloWings.jpg',
+            src: './images/BuffaloWings.jpg',
             title: 'Buffalo Wings',
             tags: ['Appetizer']
         }
         itemsList.push(defaultElement);
 
         let defaultElementOne = {
-            src: '/images/Oatmeal.jpg',
+            src: './images/Oatmeal.jpg',
             title: 'Oatmeal',
             tags: ['Breakfast']
         }
         itemsList.push(defaultElementOne);
 
         let defaultElementTwo = {
-            src: '/images/Pizza.jpg',
+            src: './images/Pizza.jpg',
             title: 'Pizza',
             tags: ['Lunch', 'Dinner']
         }
         itemsList.push(defaultElementTwo);
 
         let defaultElementThree = {
-            src: '/images/PotRoast.jpg',
+            src: './images/PotRoast.jpg',
             title: 'Pot Roast',
             tags: ['Lunch', 'Dinner']
         }
         itemsList.push(defaultElementThree);
 
         let defaultElementFour = {
-            src: '/images/Icecream.jpg',
+            src: './images/Icecream.jpg',
             title: 'Icecream',
             tags: ['Dessert']
         }
         itemsList.push(defaultElementFour);
 
         let defaultElementFive = {
-            src: '/images/GrilledCheese.jpg',
+            src: './images/GrilledCheese.jpg',
             title: 'Grilled Cheese',
             tags: ['Lunch', 'Dinner']
         }
